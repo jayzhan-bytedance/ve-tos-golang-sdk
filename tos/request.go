@@ -319,6 +319,11 @@ func (rb *requestBuilder) Request(ctx context.Context, method string,
 	retryAfterSec := int64(-1)
 
 	req = rb.Build(method, content)
+	v, ok := ctx.Value("x-bcgw-accountmeta").(string)
+	if !ok {
+		return nil, errors.New("fail to resolve x-bcgw-accountmeta")
+	}
+	req.Header.Set("x-bcgw-accountmeta", v)
 
 	if rb.Retry != nil {
 		work := func(retryCount int) (retrySec int64, err error) {
